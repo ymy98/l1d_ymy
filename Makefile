@@ -5,4 +5,4 @@ SIM_FILELIST 					= $(L1D_PATH)/l1d_filelist.f
 
 compile:
 	mkdir -p $(RTL_COMPILE_OUTPUT)
-	cd $(RTL_COMPILE_OUTPUT) ;vcs -lca -kdb -full64 -debug_access -sverilog -f $(SIM_FILELIST) +lint=PCWM +lint=TFIPC-L +define+TOY_SIM
+	cd $(RTL_COMPILE_OUTPUT) ;vcs -full64 -cpp g++-4.8 -cc gcc-4.8 -LDFLAGS -Wl,--no-as-needed -lca -kdb -debug_access -sverilog -f $(SIM_FILELIST) +lint=PCWM +lint=TFIPC-L +define+TOY_SIM -l comp.log
