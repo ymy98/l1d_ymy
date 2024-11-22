@@ -1,5 +1,4 @@
 work
-.dvt
-.vscode
-*dvt*
 dvt_build.log
+*dvt*
+.vscode/

@@ -1,3 +1,8 @@
+$L1D_PATH/src/cmn/cmn_bin2onehot.sv
+$L1D_PATH/src/cmn/cmn_lead_one.sv
+$L1D_PATH/src/cmn/cmn_onehot2bin.sv
+$L1D_PATH/src/cmn/fifo.sv
+$L1D_PATH/src/cmn/sp_sram.sv
 $L1D_PATH/src/l1d/l1d_package.sv
 $L1D_PATH/src/l1d/l1d_data_pipe.sv
 $L1D_PATH/src/l1d/l1d_data_pipe_arbiter.sv
@@ -10,8 +15,3 @@ $L1D_PATH/src/l1d/l1d_tag_pipe.sv
 $L1D_PATH/src/l1d/pre_allocator.sv
 $L1D_PATH/src/l1d/v_en_decoder.sv
 $L1D_PATH/src/l1d/vrp_arb_rr.sv
-$L1D_PATH/src/cmn/cmn_bin2onehot.sv
-$L1D_PATH/src/cmn/cmn_lead_one.sv
-$L1D_PATH/src/cmn/cmn_onehot2bin.sv
-$L1D_PATH/src/cmn/fifo.sv
-$L1D_PATH/src/cmn/sp_sram.sv
