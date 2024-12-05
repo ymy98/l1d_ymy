@@ -48,7 +48,7 @@ pack_l1d_tag_req                tag_pipe_pld_buf                    ;
 
 //write_buffer                                                      
 logic                           wr_ena_buf                          ;
-pack_l1d_tag_pipe_rw_pld        wr_pld_buf                          ;
+pack_l1d_tag_pipe_wr_pld        wr_pld_buf                          ;
 
 //tag ram signals                                                   
 logic                           tag_ram_en                          ;
@@ -56,6 +56,7 @@ logic                           tag_ram_wr                          ;
 logic [L1D_INDEX_WIDTH-1:0]     tag_ram_addr                        ;
 logic [L1D_TAG_RAM_WIDHT-1:0]   tag_ram_din                         ;
 logic [L1D_TAG_RAM_WIDHT-1:0]   tag_ram_dout                        ;
+logic [L1D_TAG_RAM_WIDHT-1:0]   tag_ram_be                          ;
                                                                     
 logic [L1D_WAY_NUM-1:0]         tag_ram_dty[LAD_TAG_RAM_DEPTH-1:0]  ;
 logic [L1D_WAY_NUM-1:0]         tag_ram_vld[LAD_TAG_RAM_DEPTH-1:0]  ;
@@ -141,7 +142,10 @@ endgenerate
 
 generate for(i=0;i<L1D_WAY_NUM;i++) begin                                       
     always_ff@(posedge clk) begin                                           
-        wr_pld_buf.line_tag[i]    <= evict_way_ohot[i] ? tag_pipe_pld_buf.wr_data : evict_tag_array[i] ;
+        // wr_pld_buf.line_tag[i]    <= evict_way_ohot[i] ? tag_pipe_pld_buf.wr_data : evict_tag_array[i] ;
+        wr_pld_buf.line_tag[i]    <=  tag_pipe_pld_buf.wr_data ;
+        wr_pld_buf.tag_be[i]      <=  evict_way_ohot[i]        ;  
+
     end                                                                                                                                 
 end                                                                                                                                     
 endgenerate
@@ -242,6 +246,12 @@ assign tag_ram_en    = wr_ena_buf || tag_pipe_hsk                               
 assign tag_ram_wr    = wr_ena_buf                                               ;
 assign tag_ram_addr  = wr_ena_buf ? wr_pld_buf.index : tag_pipe_req_pld.index   ;
 assign tag_ram_din   = wr_pld_buf.line_tag                                      ; 
+// assign tag_ram_be    = wr_pld_buf.tag_be                                        ;
+
+generate for(i=0;i<L1D_WAY_NUM;i++)begin
+    assign tag_ram_be[i*L1D_TAG_WIDTH+L1D_TAG_WIDTH-1:i*L1D_TAG_WIDTH] = {L1D_TAG_WIDTH{wr_pld_buf.tag_be [i]}}; 
+end
+endgenerate
 
 sp_sram#(
     .DATA_WIDTH(L1D_TAG_RAM_WIDHT), 
@@ -250,7 +260,8 @@ sp_sram#(
     .clk        (clk         ),      
     .rst_n      (rst_n       ),    
     .en         (tag_ram_en  ),       
-    .rw         (tag_ram_wr  ),       
+    .wr         (tag_ram_wr ), 
+    .be         (tag_ram_be  ),      
     .addr       (tag_ram_addr),     
     .data_in    (tag_ram_din ),  
     .data_out   (tag_ram_dout)   
@@ -260,6 +271,8 @@ sp_sram#(
 //--------------------
 //------hzd check
 //--------------------
+//TODO : used the first cycle to check index way hzd and used the hit way to choose
+ 
 //hit way should check ?? should evict way be checked?
 //---hit index way 
 //---same hit index way,WAW RAW WAR should be in order
@@ -324,7 +337,7 @@ always_comb begin
     tag_pipe_rsp_pld.need_linefill = !tag_hit                                         ;
     for(int k=0;k<L1D_WAY_NUM;k++) begin
         if(tag_way_ohot[k] == 1'b1)
-            tag_pipe_rsp_pld.evict_tag =  evict_tag_array[k] ;
+            tag_pipe_rsp_pld.evict_tag =  evict_tag_array[k]                          ;
     end
     tag_pipe_rsp_pld.way           = tag_way                                          ;
 end

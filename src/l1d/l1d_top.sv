@@ -1,4 +1,4 @@
-module l1d_data_top 
+module l1d_top 
     import l1d_package::*;
 (
     input  logic                                            clk                                         ,
@@ -175,5 +175,7 @@ l1d_data_pipe u_l1d_data_pipe
    .evict_done_id                 (evict_done_id           ),
    .evict_done_en                 (evict_done_en           )                            
 );
-
+//pre_fetched engine
+assign mshr_prefetch_vld = 1'b0                           ;
+assign mshr_prefetch_pld = {$bits(pack_l1d_tag_req){1'b0}};
 endmodule 

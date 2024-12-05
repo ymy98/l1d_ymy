@@ -168,7 +168,7 @@ end
     generate for(i=0;i<L1D_MSHR_ENTRY_NUM;i++) begin
         always_ff@(posedge clk) begin
             if(mshr_state_update_en)                hzd_evict_tag_regfile[i] <= mshr_state_hzd_evict_tag[i];
-            else if(v_release_en_index_way_in[i])   hzd_evict_tag_regfile[i] <= 1'b0                       ;                              
+            else if(v_release_en_evict_tag_in[i])   hzd_evict_tag_regfile[i] <= 1'b0                       ;                              
         end
     end
     endgenerate

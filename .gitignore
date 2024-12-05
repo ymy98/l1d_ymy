@@ -2,3 +2,11 @@ work
 dvt_build.log
 *dvt*
 .vscode/
+*.log
+spyglass*
+test
+test*
+csrc
+simv*
+compile.log
+.dvt/
